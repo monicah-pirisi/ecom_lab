@@ -20,6 +20,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Validate CSRF token
     if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
         $_SESSION['error_message'] = 'Invalid security token. Please try again.';
+        ob_clean();
         header('Location: ../admin/category.php');
         exit();
     }
@@ -51,10 +52,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['error_message'] = 'An error occurred while creating category. Please try again.';
     }
 
+    ob_clean();
     header('Location: ../admin/category.php');
     exit();
 } else {
     $_SESSION['error_message'] = 'Invalid request method.';
+    ob_clean();
     header('Location: ../admin/category.php');
     exit();
 }

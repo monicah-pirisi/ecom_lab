@@ -5,12 +5,14 @@ require_once '../controllers/category_controller.php';
 
 // Check if user is logged in
 if (!isLoggedIn()) {
+    ob_clean();
     header('Location: ../login/login.php');
     exit();
 }
 
 // Check if user is admin
 if (!isAdmin()) {
+    ob_clean();
     header('Location: ../login/login.php');
     exit();
 }
@@ -20,7 +22,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Validate CSRF token
     if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
         $_SESSION['error_message'] = 'Invalid security token. Please try again.';
-        header('Location: ../admin/category.php');
+        ob_clean();
+    header('Location: ../admin/category.php');
         exit();
     }
 
@@ -51,10 +54,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $_SESSION['error_message'] = 'An error occurred while creating category. Please try again.';
     }
 
+    ob_clean();
     header('Location: ../admin/category.php');
     exit();
 } else {
     $_SESSION['error_message'] = 'Invalid request method.';
+    ob_clean();
     header('Location: ../admin/category.php');
     exit();
 }
