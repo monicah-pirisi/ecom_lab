@@ -456,7 +456,7 @@ ob_clean();
                         </a>
                     </li>
                     <?php if (!function_exists('isLoggedIn') || !isLoggedIn()): ?>
-                        <!-- Show Register and Login for non-logged in users -->
+                        <!-- Not logged in: Register | Login -->
                         <li class="nav-item">
                             <a class="nav-link" href="login/register.php">
                                 <i class="fas fa-user-plus me-1"></i>Register
@@ -467,26 +467,35 @@ ob_clean();
                                 <i class="fas fa-sign-in-alt me-1"></i>Login
                             </a>
                         </li>
-                    <?php else: ?>
-                        <!-- Show user-specific menu for logged in users -->
+                    <?php elseif (function_exists('isAdmin') && isAdmin()): ?>
+                        <!-- Logged in as admin: Logout | Category | Brand | Add Product -->
                         <li class="nav-item">
                             <a class="nav-link" href="login/logout.php">
                                 <i class="fas fa-sign-out-alt me-1"></i>Logout
                             </a>
                         </li>
-                        <?php if (function_exists('isAdmin') && isAdmin()): ?>
-                            <!-- Admin menu: Logout | Category | Brand -->
-                            <li class="nav-item">
-                                <a class="nav-link" href="admin/category.php">
-                                    <i class="fas fa-list me-1"></i>Category
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="admin/brand.php">
-                                    <i class="fas fa-tag me-1"></i>Brand
-                                </a>
-                            </li>
-                        <?php endif; ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="admin/category.php">
+                                <i class="fas fa-list me-1"></i>Category
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="admin/brand.php">
+                                <i class="fas fa-tag me-1"></i>Brand
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="admin/product.php">
+                                <i class="fas fa-box me-1"></i>Add Product
+                            </a>
+                        </li>
+                    <?php else: ?>
+                        <!-- Logged in as regular user: Logout -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="login/logout.php">
+                                <i class="fas fa-sign-out-alt me-1"></i>Logout
+                            </a>
+                        </li>
                     <?php endif; ?>
                 </ul>
             </div>
@@ -529,6 +538,9 @@ ob_clean();
                                     </a>
                                     <a href="admin/brand.php" class="btn btn-outline-custom">
                                         <i class="fas fa-tag me-2"></i>Brands
+                                    </a>
+                                    <a href="admin/product.php" class="btn btn-outline-custom">
+                                        <i class="fas fa-box me-2"></i>Products
                                     </a>
                                 <?php endif; ?>
                             <?php endif; ?>

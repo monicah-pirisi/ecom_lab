@@ -1,0 +1,11 @@
+# Allow image files only
+<FilesMatch "\.(jpg|jpeg|png|gif|webp)$">
+    Order Allow,Deny
+    Allow from all
+</FilesMatch>
+
+# Deny access to PHP files in uploads
+<FilesMatch "\.php$">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
