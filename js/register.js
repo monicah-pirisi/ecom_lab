@@ -9,6 +9,9 @@ $(document).ready(function() {
         country = $('#country').val();
         city = $('#city').val();
         role = $('input[name="role"]:checked').val();
+        
+        // Get CSRF token
+        var csrf_token = $('input[name="csrf_token"]').val();
 
         if (name == '' || email == '' || password == '' || phone_number == '' || country == '' || city == '') {
             Swal.fire({
@@ -31,6 +34,7 @@ $(document).ready(function() {
         $.ajax({
             url: '../actions/register_user_action.php',
             type: 'POST',
+            dataType: 'json', // Add this line
             data: {
                 name: name,
                 email: email,
@@ -38,7 +42,8 @@ $(document).ready(function() {
                 phone_number: phone_number,
                 country: country,
                 city: city,
-                role: role
+                role: role,
+                csrf_token: csrf_token // Add this line
             },
             success: function(response) {
                 if (response.status === 'success') {

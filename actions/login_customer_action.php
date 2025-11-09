@@ -1,11 +1,19 @@
 <?php
-
-header('Content-Type: application/json');
+// Set JSON header FIRST - before any output
+header('Content-Type: application/json; charset=utf-8');
 
 require_once '../settings/core.php';
 require_once '../controllers/customer_controller.php';
 
-$response = array();
+$response = [];
+
+// Check if it's a POST request
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    $response['status'] = 'error';
+    $response['message'] = 'Invalid request method';
+    echo json_encode($response);
+    exit();
+}
 
 // Check if the user is already logged in
 if (isset($_SESSION['user_id'])) {
@@ -24,7 +32,7 @@ if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
 }
 
 // Get POST data
-$email = $_POST['email'] ?? '';
+$email = trim($_POST['email'] ?? '');
 $password = $_POST['password'] ?? '';
 
 // Validate input
@@ -44,7 +52,6 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 }
 
 try {
-    // Attempt to login the customer
     $login_result = login_customer_ctr($email, $password);
 
     if ($login_result['status'] === 'success') {
@@ -53,25 +60,37 @@ try {
         $_SESSION['user_name'] = $login_result['user_name'];
         $_SESSION['user_email'] = $login_result['user_email'];
         $_SESSION['user_role'] = $login_result['user_role'];
-        $_SESSION['user_country'] = $login_result['user_country'];
-        $_SESSION['user_city'] = $login_result['user_city'];
-        $_SESSION['user_phone'] = $login_result['user_phone'];
+        $_SESSION['user_country'] = $login_result['user_country'] ?? '';
+        $_SESSION['user_city'] = $login_result['user_city'] ?? '';
+        $_SESSION['user_phone'] = $login_result['user_phone'] ?? '';
 
         // Regenerate session ID to prevent session fixation attacks
         regenerateSession();
 
         $response['status'] = 'success';
         $response['message'] = 'Login successful';
-        $response['redirect'] = '../dashboard.php'; // Redirect to dashboard after login
+        
+        // Redirect based on user role
+        if ($login_result['user_role'] == 1) {
+            $response['redirect'] = '../view/customer_dashboard.php';
+        } elseif ($login_result['user_role'] == 2) {
+            $response['redirect'] = '../view/owner_dashboard.php';
+        } else {
+            $response['redirect'] = '../view/dashboard.php';
+        }
+        
+        echo json_encode($response);
     } else {
         $response['status'] = 'error';
-        $response['message'] = $login_result['message'];
+        $response['message'] = $login_result['message'] ?? 'Invalid email or password';
+        echo json_encode($response);
     }
 } catch (Exception $e) {
-    @error_log('Login error: ' . $e->getMessage());
+    error_log('Login error: ' . $e->getMessage());
     $response['status'] = 'error';
     $response['message'] = 'An error occurred during login. Please try again.';
+    echo json_encode($response);
 }
 
-echo json_encode($response);
+exit();
 ?>

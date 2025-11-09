@@ -1,11 +1,19 @@
 <?php
-
-header('Content-Type: application/json');
+// Set headers FIRST - before any output
+header('Content-Type: application/json; charset=utf-8');
 
 require_once '../settings/core.php';
 require_once '../controllers/customer_controller.php';
 
 $response = array();
+
+// Check if it's a POST request
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    $response['status'] = 'error';
+    $response['message'] = 'Invalid request method';
+    echo json_encode($response);
+    exit();
+}
 
 // Validate CSRF token
 if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
@@ -16,55 +24,24 @@ if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
 }
 
 try {
-
     // Validate required fields
-    if (!isset($_POST['name']) || empty($_POST['name'])) {
-        $response['status'] = 'error';
-        $response['message'] = 'Name is required';
-        echo json_encode($response);
-        exit();
-    }
+    $requiredFields = [
+        'name' => 'Name',
+        'email' => 'Email',
+        'password' => 'Password',
+        'phone_number' => 'Phone number',
+        'country' => 'Country',
+        'city' => 'City',
+        'role' => 'Role'
+    ];
 
-    if (!isset($_POST['email']) || empty($_POST['email'])) {
-        $response['status'] = 'error';
-        $response['message'] = 'Email is required';
-        echo json_encode($response);
-        exit();
-    }
-
-    if (!isset($_POST['password']) || empty($_POST['password'])) {
-        $response['status'] = 'error';
-        $response['message'] = 'Password is required';
-        echo json_encode($response);
-        exit();
-    }
-
-    if (!isset($_POST['phone_number']) || empty($_POST['phone_number'])) {
-        $response['status'] = 'error';
-        $response['message'] = 'Phone number is required';
-        echo json_encode($response);
-        exit();
-    }
-
-    if (!isset($_POST['country']) || empty($_POST['country'])) {
-        $response['status'] = 'error';
-        $response['message'] = 'Country is required';
-        echo json_encode($response);
-        exit();
-    }
-
-    if (!isset($_POST['city']) || empty($_POST['city'])) {
-        $response['status'] = 'error';
-        $response['message'] = 'City is required';
-        echo json_encode($response);
-        exit();
-    }
-
-    if (!isset($_POST['role']) || empty($_POST['role'])) {
-        $response['status'] = 'error';
-        $response['message'] = 'Role is required';
-        echo json_encode($response);
-        exit();
+    foreach ($requiredFields as $field => $label) {
+        if (!isset($_POST[$field]) || empty(trim($_POST[$field]))) {
+            $response['status'] = 'error';
+            $response['message'] = $label . ' is required';
+            echo json_encode($response);
+            exit();
+        }
     }
 
     // Validate email format
@@ -75,13 +52,22 @@ try {
         exit();
     }
 
+    // Sanitize inputs
     $name = trim($_POST['name']);
     $email = trim($_POST['email']);
     $password = $_POST['password'];
     $phone_number = trim($_POST['phone_number']);
     $country = trim($_POST['country']);
     $city = trim($_POST['city']);
-    $role = $_POST['role'];
+    $role = intval($_POST['role']);
+
+    // Validate role value
+    if (!in_array($role, [1, 2])) {
+        $response['status'] = 'error';
+        $response['message'] = 'Invalid role selected';
+        echo json_encode($response);
+        exit();
+    }
 
     // Check if email already exists
     $existing_customer = get_customer_by_email_ctr($email);
@@ -92,11 +78,12 @@ try {
         exit();
     }
 
+    // Register user
     $user_id = register_customer_ctr($name, $email, $password, $phone_number, $country, $city, $role);
 
     if ($user_id) {
         $response['status'] = 'success';
-        $response['message'] = 'Registered successfully';
+        $response['message'] = 'Registration successful! Redirecting to login...';
         $response['user_id'] = $user_id;
     } else {
         $response['status'] = 'error';
@@ -104,9 +91,12 @@ try {
     }
 
 } catch (Exception $e) {
-    @error_log('Registration error: ' . $e->getMessage());
+    error_log('Registration error: ' . $e->getMessage());
     $response['status'] = 'error';
     $response['message'] = 'An error occurred during registration. Please try again.';
 }
 
+// Ensure clean JSON output
 echo json_encode($response);
+exit();
+?>
