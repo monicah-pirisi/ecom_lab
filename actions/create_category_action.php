@@ -15,59 +15,47 @@ if (!isAdmin()) {
     exit();
 }
 
-// Set content type to JSON for API response
-header('Content-Type: application/json');
-
 // Check if form was submitted via POST
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Validate CSRF token
+    if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
+        $_SESSION['error_message'] = 'Invalid security token. Please try again.';
+        header('Location: ../admin/category.php');
+        exit();
+    }
+
     try {
         // Get form data
         $cat_name = trim($_POST['cat_name'] ?? '');
         $cat_type = $_POST['cat_type'] ?? '';
-        
+
         // Validate data
         $validation = validate_category_data_ctr([
             'cat_name' => $cat_name,
             'cat_type' => $cat_type
         ]);
-        
+
         if ($validation['valid']) {
             // Create category using the category controller
             $result = create_category_ctr($cat_name, $cat_type);
-            
+
             if ($result['success']) {
-                // Return success response
-                echo json_encode([
-                    'success' => true,
-                    'message' => $result['message'],
-                    'category_id' => $result['category_id']
-                ]);
+                $_SESSION['success_message'] = $result['message'];
             } else {
-                // Return error response
-                echo json_encode([
-                    'success' => false,
-                    'message' => $result['message']
-                ]);
+                $_SESSION['error_message'] = $result['message'];
             }
         } else {
-            // Return validation error response
-            echo json_encode([
-                'success' => false,
-                'message' => 'Validation failed: ' . implode(', ', $validation['errors'])
-            ]);
+            $_SESSION['error_message'] = 'Validation failed: ' . implode(', ', $validation['errors']);
         }
     } catch (Exception $e) {
-        // Handle any unexpected errors
-        echo json_encode([
-            'success' => false,
-            'message' => 'An error occurred while creating category: ' . $e->getMessage()
-        ]);
+        $_SESSION['error_message'] = 'An error occurred while creating category. Please try again.';
     }
+
+    header('Location: ../admin/category.php');
+    exit();
 } else {
-    // Return error for non-POST requests
-    echo json_encode([
-        'success' => false,
-        'message' => 'Invalid request method. Only POST requests are allowed.'
-    ]);
+    $_SESSION['error_message'] = 'Invalid request method.';
+    header('Location: ../admin/category.php');
+    exit();
 }
 ?>

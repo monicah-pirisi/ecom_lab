@@ -2,7 +2,8 @@
 
 header('Content-Type: application/json');
 
-session_start();
+require_once '../settings/core.php';
+require_once '../controllers/customer_controller.php';
 
 $response = array();
 
@@ -14,11 +15,17 @@ if (isset($_SESSION['user_id'])) {
     exit();
 }
 
-require_once '../controllers/customer_controller.php';
+// Validate CSRF token
+if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
+    $response['status'] = 'error';
+    $response['message'] = 'Invalid security token. Please refresh the page and try again.';
+    echo json_encode($response);
+    exit();
+}
 
 // Get POST data
-$email = $_POST['email'];
-$password = $_POST['password'];
+$email = $_POST['email'] ?? '';
+$password = $_POST['password'] ?? '';
 
 // Validate input
 if (empty($email) || empty($password)) {
@@ -36,25 +43,34 @@ if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
     exit();
 }
 
-// Attempt to login the customer
-$login_result = login_customer_ctr($email, $password);
+try {
+    // Attempt to login the customer
+    $login_result = login_customer_ctr($email, $password);
 
-if ($login_result['status'] === 'success') {
-    // Set session variables
-    $_SESSION['user_id'] = $login_result['user_id'];
-    $_SESSION['user_name'] = $login_result['user_name'];
-    $_SESSION['user_email'] = $login_result['user_email'];
-    $_SESSION['user_role'] = $login_result['user_role'];
-    $_SESSION['user_country'] = $login_result['user_country'];
-    $_SESSION['user_city'] = $login_result['user_city'];
-    $_SESSION['user_phone'] = $login_result['user_phone'];
-    
-    $response['status'] = 'success';
-    $response['message'] = 'Login successful';
-    $response['redirect'] = '../dashboard.php'; // Redirect to dashboard after login
-} else {
+    if ($login_result['status'] === 'success') {
+        // Set session variables
+        $_SESSION['user_id'] = $login_result['user_id'];
+        $_SESSION['user_name'] = $login_result['user_name'];
+        $_SESSION['user_email'] = $login_result['user_email'];
+        $_SESSION['user_role'] = $login_result['user_role'];
+        $_SESSION['user_country'] = $login_result['user_country'];
+        $_SESSION['user_city'] = $login_result['user_city'];
+        $_SESSION['user_phone'] = $login_result['user_phone'];
+
+        // Regenerate session ID to prevent session fixation attacks
+        regenerateSession();
+
+        $response['status'] = 'success';
+        $response['message'] = 'Login successful';
+        $response['redirect'] = '../dashboard.php'; // Redirect to dashboard after login
+    } else {
+        $response['status'] = 'error';
+        $response['message'] = $login_result['message'];
+    }
+} catch (Exception $e) {
+    @error_log('Login error: ' . $e->getMessage());
     $response['status'] = 'error';
-    $response['message'] = $login_result['message'];
+    $response['message'] = 'An error occurred during login. Please try again.';
 }
 
 echo json_encode($response);

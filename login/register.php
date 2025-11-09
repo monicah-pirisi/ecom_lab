@@ -1,3 +1,6 @@
+<?php
+require_once '../settings/core.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -136,6 +139,7 @@
                     </div>
                     <div class="card-body">
                         <form method="POST" action="" class="mt-4" id="register-form">
+                            <?php csrfTokenField(); ?>
                             <div class="mb-3">
                                 <label for="name" class="form-label">Name <i class="fa fa-user"></i></label>
                                 <input type="text" class="form-control animate__animated animate__fadeInUp" id="name" name="name" required>

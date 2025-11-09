@@ -445,6 +445,7 @@ ob_clean();
         <div class="form-section">
             <h2><?php echo $edit_category ? 'Update Category' : 'Create New Category'; ?></h2>
             <form action="../actions/<?php echo $edit_category ? 'update_category_action.php' : 'create_category_action.php'; ?>" method="POST" novalidate>
+                <?php csrfTokenField(); ?>
                 <?php if ($edit_category): ?>
                     <input type="hidden" name="cat_id" value="<?php echo htmlspecialchars($edit_category['cat_id'], ENT_QUOTES, 'UTF-8'); ?>">
                 <?php endif; ?>
@@ -508,9 +509,11 @@ ob_clean();
                                         <p>ID: <?php echo htmlspecialchars($category['cat_id'], ENT_QUOTES, 'UTF-8'); ?></p>
                                         <div class="category-actions">
                                             <a href="?edit=<?php echo urlencode($category['cat_id']); ?>" class="btn btn-warning">Edit</a>
-                                            <a href="../actions/delete_category_action.php?cat_id=<?php echo urlencode($category['cat_id']); ?>" 
-                                               class="btn btn-danger" 
-                                               onclick="return confirm('Are you sure you want to delete this category? This action cannot be undone.')">Delete</a>
+                                            <form method="POST" action="../actions/delete_category_action.php" style="display: inline;">
+                                                <?php csrfTokenField(); ?>
+                                                <input type="hidden" name="cat_id" value="<?php echo htmlspecialchars($category['cat_id'], ENT_QUOTES, 'UTF-8'); ?>">
+                                                <button type="submit" class="btn btn-danger" onclick="return confirm('Are you sure you want to delete this category? This action cannot be undone.')">Delete</button>
+                                            </form>
                                         </div>
                                     </div>
                                 <?php endforeach; ?>

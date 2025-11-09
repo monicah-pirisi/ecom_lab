@@ -41,9 +41,10 @@ try {
     }
 } catch (Exception $e) {
     // Handle any unexpected errors
+    @error_log('Error fetching categories: ' . $e->getMessage());
     echo json_encode([
         'success' => false,
-        'message' => 'An error occurred while fetching categories: ' . $e->getMessage(),
+        'message' => 'An error occurred while fetching categories. Please try again.',
         'data' => null,
         'count' => 0
     ]);

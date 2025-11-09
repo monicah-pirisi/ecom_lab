@@ -15,48 +15,40 @@ if (!isAdmin()) {
     exit();
 }
 
-// Set content type to JSON for API response
-header('Content-Type: application/json');
+// Check if form was submitted via POST
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // Validate CSRF token
+    if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
+        $_SESSION['error_message'] = 'Invalid security token. Please try again.';
+        header('Location: ../admin/category.php');
+        exit();
+    }
 
-try {
-    // Check if category ID is provided via GET or POST
-    $cat_id = null;
-    
-    if (isset($_GET['cat_id'])) {
-        $cat_id = (int)$_GET['cat_id'];
-    } elseif (isset($_POST['cat_id'])) {
-        $cat_id = (int)$_POST['cat_id'];
-    }
-    
-    if ($cat_id && $cat_id > 0) {
-        // Delete category using the category controller
-        $result = delete_category_ctr($cat_id);
-        
-        if ($result['success']) {
-            // Return success response
-            echo json_encode([
-                'success' => true,
-                'message' => $result['message']
-            ]);
+    try {
+        // Get category ID from POST
+        $cat_id = (int)($_POST['cat_id'] ?? 0);
+
+        if ($cat_id > 0) {
+            // Delete category using the category controller
+            $result = delete_category_ctr($cat_id);
+
+            if ($result['success']) {
+                $_SESSION['success_message'] = $result['message'];
+            } else {
+                $_SESSION['error_message'] = $result['message'];
+            }
         } else {
-            // Return error response
-            echo json_encode([
-                'success' => false,
-                'message' => $result['message']
-            ]);
+            $_SESSION['error_message'] = 'Invalid category ID';
         }
-    } else {
-        // Return error response for missing or invalid ID
-        echo json_encode([
-            'success' => false,
-            'message' => 'Category ID is required and must be a valid positive integer'
-        ]);
+    } catch (Exception $e) {
+        $_SESSION['error_message'] = 'An error occurred while deleting category. Please try again.';
     }
-} catch (Exception $e) {
-    // Handle any unexpected errors
-    echo json_encode([
-        'success' => false,
-        'message' => 'An error occurred while deleting category: ' . $e->getMessage()
-    ]);
+
+    header('Location: ../admin/category.php');
+    exit();
+} else {
+    $_SESSION['error_message'] = 'Invalid request method.';
+    header('Location: ../admin/category.php');
+    exit();
 }
 ?>

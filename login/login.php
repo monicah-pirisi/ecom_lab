@@ -1,3 +1,6 @@
+<?php
+require_once '../settings/core.php';
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -132,6 +135,7 @@
                         -->
 
                         <form method="POST" action="" class="mt-4" id="login-form">
+                            <?php csrfTokenField(); ?>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email <i class="fa fa-envelope"></i></label>
                                 <input type="email" class="form-control animate__animated animate__fadeInUp" id="email" name="email" required>

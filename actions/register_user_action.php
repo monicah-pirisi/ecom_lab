@@ -2,19 +2,20 @@
 
 header('Content-Type: application/json');
 
-session_start();
+require_once '../settings/core.php';
+require_once '../controllers/customer_controller.php';
 
 $response = array();
 
-// Note: Removed the "already logged in" check to allow registration
-// Users should be able to register new accounts even if logged in
-
-// Enable error reporting for debugging
-error_reporting(E_ALL);
-ini_set('display_errors', 1);
+// Validate CSRF token
+if (!validateCSRFToken($_POST['csrf_token'] ?? '')) {
+    $response['status'] = 'error';
+    $response['message'] = 'Invalid security token. Please refresh the page and try again.';
+    echo json_encode($response);
+    exit();
+}
 
 try {
-    require_once '../controllers/customer_controller.php';
 
     // Validate required fields
     if (!isset($_POST['name']) || empty($_POST['name'])) {
@@ -103,9 +104,9 @@ try {
     }
 
 } catch (Exception $e) {
+    @error_log('Registration error: ' . $e->getMessage());
     $response['status'] = 'error';
-    $response['message'] = 'Registration error: ' . $e->getMessage();
-    error_log('Registration error: ' . $e->getMessage());
+    $response['message'] = 'An error occurred during registration. Please try again.';
 }
 
 echo json_encode($response);
