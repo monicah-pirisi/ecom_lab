@@ -469,24 +469,24 @@ ob_clean();
                         </li>
                     <?php else: ?>
                         <!-- Show user-specific menu for logged in users -->
-                        <?php if (function_exists('isAdmin') && isAdmin()): ?>
-                            <!-- Admin menu -->
-                            <li class="nav-item">
-                                <a class="nav-link" href="admin/category.php">
-                                    <i class="fas fa-cogs me-1"></i>Categories
-                                </a>
-                            </li>
-                        <?php endif; ?>
-                        <li class="nav-item">
-                            <a class="nav-link" href="dashboard.php">
-                                <i class="fas fa-tachometer-alt me-1"></i>Dashboard
-                            </a>
-                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="login/logout.php">
                                 <i class="fas fa-sign-out-alt me-1"></i>Logout
                             </a>
                         </li>
+                        <?php if (function_exists('isAdmin') && isAdmin()): ?>
+                            <!-- Admin menu: Logout | Category | Brand -->
+                            <li class="nav-item">
+                                <a class="nav-link" href="admin/category.php">
+                                    <i class="fas fa-list me-1"></i>Category
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="admin/brand.php">
+                                    <i class="fas fa-tag me-1"></i>Brand
+                                </a>
+                            </li>
+                        <?php endif; ?>
                     <?php endif; ?>
                 </ul>
             </div>
@@ -525,7 +525,10 @@ ob_clean();
                                 </a>
                                 <?php if (function_exists('isAdmin') && isAdmin()): ?>
                                     <a href="admin/category.php" class="btn btn-outline-custom">
-                                        <i class="fas fa-cogs me-2"></i>Manage Categories
+                                        <i class="fas fa-list me-2"></i>Categories
+                                    </a>
+                                    <a href="admin/brand.php" class="btn btn-outline-custom">
+                                        <i class="fas fa-tag me-2"></i>Brands
                                     </a>
                                 <?php endif; ?>
                             <?php endif; ?>
