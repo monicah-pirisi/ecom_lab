@@ -1,6 +1,8 @@
 <?php
 
 header('Content-Type: application/json');
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
 
 require_once '../settings/core.php';
 require_once '../controllers/product_controller.php';
@@ -40,7 +42,7 @@ try {
 } catch (Exception $e) {
     echo json_encode([
         'success' => false,
-        'message' => 'An error occurred while fetching products. Please try again.'
+        'message' => 'Error: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine()
     ]);
 }
 ?>

@@ -1,6 +1,6 @@
 <?php
 
-require_once '../classes/product_class.php';
+require_once __DIR__ . '/../classes/product_class.php';
 
 /**
  * Product Controller - handles business logic for product operations
