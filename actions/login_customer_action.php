@@ -70,14 +70,8 @@ try {
         $response['status'] = 'success';
         $response['message'] = 'Login successful';
         
-        // Redirect based on user role
-        if ($login_result['user_role'] == 1) {
-            $response['redirect'] = '../view/customer_dashboard.php';
-        } elseif ($login_result['user_role'] == 2) {
-            $response['redirect'] = '../view/owner_dashboard.php';
-        } else {
-            $response['redirect'] = '../view/dashboard.php';
-        }
+        // Redirect to main dashboard (same for all users)
+        $response['redirect'] = '../dashboard.php';
         
         echo json_encode($response);
     } else {

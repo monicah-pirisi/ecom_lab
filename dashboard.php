@@ -1,18 +1,9 @@
 <?php
-// Start output buffering to prevent any unwanted output
-ob_start();
+// Use the core.php for consistent session management
+require_once 'settings/core.php';
 
-// Error reporting - remove in production
-error_reporting(0);
-ini_set('display_errors', 0);
-
-// Start session if not already started
-if (session_status() == PHP_SESSION_NONE) {
-    session_start();
-}
-
-// Check if user is logged in
-if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
+// Check if user is logged in using the core function
+if (!isLoggedIn()) {
     header('Location: login/login.php');
     exit();
 }
@@ -28,11 +19,7 @@ $user_phone = isset($_SESSION['user_phone']) ? $_SESSION['user_phone'] : 'Not pr
 // Determine user type
 $user_type = ($user_role == 1) ? 'Administrator' : 'Restaurant Owner';
 $welcome_message = ($user_role == 1) ? 'Welcome to your admin dashboard!' : 'Welcome to your restaurant owner dashboard!';
-
-// Clean any output buffer content
-ob_clean();
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -303,7 +290,6 @@ ob_clean();
             margin-right: 0.5rem;
         }
 
-        /* Responsive Design */
         @media (max-width: 768px) {
             .welcome-title {
                 font-size: 2rem;
@@ -371,7 +357,6 @@ ob_clean();
                         </a>
                     </li>
                     <?php if ($user_role == 1): ?>
-                        <!-- Admin menu -->
                         <li class="nav-item">
                             <a class="nav-link" href="admin/category.php">
                                 <i class="fas fa-cogs me-1"></i>Categories
@@ -395,7 +380,6 @@ ob_clean();
 
     <!-- Dashboard Content -->
     <div class="container dashboard-container">
-        <!-- Welcome Section -->
         <div class="welcome-card animate__animated animate__fadeInDown">
             <h1 class="welcome-title">
                 <i class="fas fa-user-circle me-3"></i>Hello, <?php echo htmlspecialchars($user_name, ENT_QUOTES, 'UTF-8'); ?>!
@@ -408,7 +392,6 @@ ob_clean();
         </div>
 
         <div class="row">
-            <!-- User Information -->
             <div class="col-lg-8">
                 <div class="user-info-card animate__animated animate__fadeInLeft">
                     <h3 class="section-title" style="color: #333; margin-bottom: 2rem;">
@@ -466,7 +449,6 @@ ob_clean();
                 </div>
             </div>
 
-            <!-- Quick Stats -->
             <div class="col-lg-4">
                 <div class="stats-card animate__animated animate__fadeInRight">
                     <div class="stats-number">1</div>
@@ -485,7 +467,6 @@ ob_clean();
             </div>
         </div>
 
-        <!-- Action Buttons -->
         <div class="row">
             <div class="col-12">
                 <div class="welcome-card animate__animated animate__fadeInUp">
@@ -494,7 +475,6 @@ ob_clean();
                     </h3>
                     <div class="action-buttons">
                         <?php if ($user_role == 1): ?>
-                            <!-- Admin Actions -->
                             <a href="admin/category.php" class="btn btn-custom">
                                 <i class="fas fa-cogs me-2"></i>Manage Categories
                             </a>
@@ -508,7 +488,6 @@ ob_clean();
                                 <i class="fas fa-cog me-2"></i>Settings
                             </a>
                         <?php else: ?>
-                            <!-- Restaurant Owner Actions -->
                             <a href="#" class="btn btn-custom" onclick="alert('Feature coming soon!')">
                                 <i class="fas fa-plus me-2"></i>Add Restaurant
                             </a>
@@ -532,13 +511,10 @@ ob_clean();
         </div>
     </div>
 
-    <!-- Scripts -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script>
-        // Add interactive animations and functionality
         $(document).ready(function() {
-            // Animate stats numbers
             $('.stats-number').each(function() {
                 const $this = $(this);
                 const countTo = parseInt($this.text());
@@ -557,14 +533,12 @@ ob_clean();
                 });
             });
 
-            // Add loading states to buttons
             $('.btn').on('click', function(e) {
                 if ($(this).attr('href') === '#') {
                     e.preventDefault();
                 }
             });
 
-            // Smooth scrolling for internal links
             $('a[href^="#"]').on('click', function(event) {
                 const target = $(this.getAttribute('href'));
                 if (target.length) {
@@ -575,7 +549,6 @@ ob_clean();
                 }
             });
 
-            // Add hover effects to cards
             $('.stats-card, .info-item').on('mouseenter', function() {
                 $(this).addClass('animate__pulse');
             }).on('mouseleave', function() {
@@ -583,7 +556,6 @@ ob_clean();
             });
         });
 
-        // Handle navigation collapse on mobile
         $(document).on('click', '.navbar-nav .nav-link', function() {
             $('.navbar-collapse').collapse('hide');
         });
