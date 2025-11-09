@@ -363,6 +363,11 @@ $welcome_message = ($user_role == 1) ? 'Welcome to your admin dashboard!' : 'Wel
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" href="admin/brand.php">
+                                <i class="fas fa-tags me-1"></i>Brands
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" href="#" onclick="alert('Feature coming soon!')">
                                 <i class="fas fa-users me-1"></i>Users
                             </a>
@@ -478,6 +483,9 @@ $welcome_message = ($user_role == 1) ? 'Welcome to your admin dashboard!' : 'Wel
                             <a href="admin/category.php" class="btn btn-custom">
                                 <i class="fas fa-cogs me-2"></i>Manage Categories
                             </a>
+                            <a href="admin/brand.php" class="btn btn-custom">
+                                <i class="fas fa-cogs me-2"></i>Manage brands
+                        </a>
                             <a href="#" class="btn btn-outline-custom" onclick="alert('Feature coming soon!')">
                                 <i class="fas fa-users me-2"></i>Manage Users
                             </a>

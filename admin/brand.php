@@ -14,6 +14,7 @@ if (session_status() == PHP_SESSION_NONE) {
 // Include required files with error handling
 $core_file = '../settings/core.php';
 $category_controller_file = '../controllers/category_controller.php';
+$brand_controller_file = '../controllers/brand_controller.php';
 
 if (!file_exists($core_file)) {
     die('Core configuration file not found. Please check your file paths.');
@@ -23,8 +24,13 @@ if (!file_exists($category_controller_file)) {
     die('Category controller file not found. Please check your file paths.');
 }
 
+if (!file_exists($brand_controller_file)) {
+    die('Brand controller file not found. Please check your file paths.');
+}
+
 require_once $core_file;
 require_once $category_controller_file;
+require_once $brand_controller_file;
 
 // Check if user is logged in
 if (!function_exists('isLoggedIn') || !isLoggedIn()) {
