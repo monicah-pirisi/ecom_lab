@@ -91,7 +91,7 @@ class Product extends db_connection
      */
     public function getAllProducts()
     {
-        // FIXED: Changed u.user_name to u.customer_name
+        //  Changed u.user_name to u.customer_name
         $stmt = $this->db->prepare("SELECT p.*, c.cat_name, b.brand_name, u.customer_name
                                     FROM products p
                                     LEFT JOIN categories c ON p.product_cat = c.cat_id
