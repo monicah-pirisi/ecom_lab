@@ -91,7 +91,8 @@ class Product extends db_connection
      */
     public function getAllProducts()
     {
-        $stmt = $this->db->prepare("SELECT p.*, c.cat_name, b.brand_name, u.user_name
+        // FIXED: Changed u.user_name to u.customer_name
+        $stmt = $this->db->prepare("SELECT p.*, c.cat_name, b.brand_name, u.customer_name
                                     FROM products p
                                     LEFT JOIN categories c ON p.product_cat = c.cat_id
                                     LEFT JOIN brands b ON p.product_brand = b.brand_id
@@ -108,7 +109,8 @@ class Product extends db_connection
      */
     public function getProductsByUserId($user_id)
     {
-        $stmt = $this->db->prepare("SELECT p.*, c.cat_name, b.brand_name, u.user_name
+        // FIXED: Changed u.user_name to u.customer_name
+        $stmt = $this->db->prepare("SELECT p.*, c.cat_name, b.brand_name, u.customer_name
                                     FROM products p
                                     LEFT JOIN categories c ON p.product_cat = c.cat_id
                                     LEFT JOIN brands b ON p.product_brand = b.brand_id
@@ -127,7 +129,8 @@ class Product extends db_connection
      */
     public function getProductById($product_id)
     {
-        $stmt = $this->db->prepare("SELECT p.*, c.cat_name, b.brand_name, u.user_name
+        // FIXED: Changed u.user_name to u.customer_name
+        $stmt = $this->db->prepare("SELECT p.*, c.cat_name, b.brand_name, u.customer_name
                                     FROM products p
                                     LEFT JOIN categories c ON p.product_cat = c.cat_id
                                     LEFT JOIN brands b ON p.product_brand = b.brand_id
@@ -145,7 +148,8 @@ class Product extends db_connection
      */
     public function getProductsByCategory($cat_id)
     {
-        $stmt = $this->db->prepare("SELECT p.*, c.cat_name, b.brand_name, u.user_name
+        // FIXED: Changed u.user_name to u.customer_name
+        $stmt = $this->db->prepare("SELECT p.*, c.cat_name, b.brand_name, u.customer_name
                                     FROM products p
                                     LEFT JOIN categories c ON p.product_cat = c.cat_id
                                     LEFT JOIN brands b ON p.product_brand = b.brand_id
@@ -164,7 +168,8 @@ class Product extends db_connection
      */
     public function getProductsByBrand($brand_id)
     {
-        $stmt = $this->db->prepare("SELECT p.*, c.cat_name, b.brand_name, u.user_name
+        // FIXED: Changed u.user_name to u.customer_name
+        $stmt = $this->db->prepare("SELECT p.*, c.cat_name, b.brand_name, u.customer_name
                                     FROM products p
                                     LEFT JOIN categories c ON p.product_cat = c.cat_id
                                     LEFT JOIN brands b ON p.product_brand = b.brand_id
@@ -272,7 +277,8 @@ class Product extends db_connection
     public function searchProducts($keyword)
     {
         $search_term = "%{$keyword}%";
-        $stmt = $this->db->prepare("SELECT p.*, c.cat_name, b.brand_name, u.user_name
+        // FIXED: Changed u.user_name to u.customer_name
+        $stmt = $this->db->prepare("SELECT p.*, c.cat_name, b.brand_name, u.customer_name
                                     FROM products p
                                     LEFT JOIN categories c ON p.product_cat = c.cat_id
                                     LEFT JOIN brands b ON p.product_brand = b.brand_id
@@ -301,3 +307,4 @@ class Product extends db_connection
         return $result['count'] > 0;
     }
 }
+?>

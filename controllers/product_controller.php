@@ -47,7 +47,8 @@ function get_all_products_ctr()
     } else {
         return [
             'success' => false,
-            'message' => 'Failed to retrieve products'
+            'message' => 'Failed to retrieve products',
+            'products' => []
         ];
     }
 }
@@ -70,7 +71,8 @@ function get_products_by_user_ctr($user_id)
     } else {
         return [
             'success' => false,
-            'message' => 'Failed to retrieve products'
+            'message' => 'Failed to retrieve products',
+            'products' => []
         ];
     }
 }
@@ -116,7 +118,8 @@ function get_products_by_category_ctr($cat_id)
     } else {
         return [
             'success' => false,
-            'message' => 'Failed to retrieve products'
+            'message' => 'Failed to retrieve products',
+            'products' => []
         ];
     }
 }
@@ -139,7 +142,8 @@ function get_products_by_brand_ctr($brand_id)
     } else {
         return [
             'success' => false,
-            'message' => 'Failed to retrieve products'
+            'message' => 'Failed to retrieve products',
+            'products' => []
         ];
     }
 }
@@ -209,7 +213,8 @@ function search_products_ctr($keyword)
     } else {
         return [
             'success' => false,
-            'message' => 'Search failed'
+            'message' => 'Search failed',
+            'products' => []
         ];
     }
 }
@@ -236,9 +241,9 @@ function validate_product_data_ctr($data)
     $errors = [];
 
     // Validate product title
-    if (empty($data['product_title'])) {
+    if (empty($data['product_title']) || trim($data['product_title']) === '') {
         $errors[] = 'Product title is required';
-    } elseif (strlen($data['product_title']) < 3) {
+    } elseif (strlen(trim($data['product_title'])) < 3) {
         $errors[] = 'Product title must be at least 3 characters long';
     } elseif (strlen($data['product_title']) > 200) {
         $errors[] = 'Product title must not exceed 200 characters';
@@ -247,19 +252,19 @@ function validate_product_data_ctr($data)
     // Validate category
     if (empty($data['product_cat'])) {
         $errors[] = 'Category is required';
-    } elseif (!is_numeric($data['product_cat'])) {
+    } elseif (!is_numeric($data['product_cat']) || $data['product_cat'] <= 0) {
         $errors[] = 'Invalid category';
     }
 
     // Validate brand
     if (empty($data['product_brand'])) {
         $errors[] = 'Brand is required';
-    } elseif (!is_numeric($data['product_brand'])) {
+    } elseif (!is_numeric($data['product_brand']) || $data['product_brand'] <= 0) {
         $errors[] = 'Invalid brand';
     }
 
     // Validate price
-    if (empty($data['product_price']) && $data['product_price'] !== '0') {
+    if (!isset($data['product_price']) || $data['product_price'] === '') {
         $errors[] = 'Price is required';
     } elseif (!is_numeric($data['product_price'])) {
         $errors[] = 'Price must be a valid number';
@@ -322,7 +327,7 @@ function handle_product_image_upload_ctr($file, $user_id, $product_id, $old_imag
     }
 
     // Validate file size (max 5MB)
-    $max_size = 5 * 1024 * 1024; // 5MB in bytes
+    $max_size = 5 * 1024 * 1024;
     if ($file['size'] > $max_size) {
         return [
             'success' => false,
@@ -336,9 +341,7 @@ function handle_product_image_upload_ctr($file, $user_id, $product_id, $old_imag
     $product_dir = "p{$product_id}";
     $full_dir = $upload_base . $user_dir . '/' . $product_dir . '/';
 
-    // Security check: Ensure path is within uploads directory
-    $real_upload_base = realpath($upload_base);
-
+    // Create directory if it doesn't exist
     if (!is_dir($full_dir)) {
         if (!mkdir($full_dir, 0755, true)) {
             return [
@@ -348,9 +351,10 @@ function handle_product_image_upload_ctr($file, $user_id, $product_id, $old_imag
         }
     }
 
+    // Security check: Ensure path is within uploads directory
+    $real_upload_base = realpath($upload_base);
     $real_full_dir = realpath($full_dir);
 
-    // Verify the directory is within uploads/
     if ($real_full_dir === false || strpos($real_full_dir, $real_upload_base) !== 0) {
         return [
             'success' => false,
@@ -359,7 +363,7 @@ function handle_product_image_upload_ctr($file, $user_id, $product_id, $old_imag
     }
 
     // Generate unique filename
-    $file_extension = pathinfo($file['name'], PATHINFO_EXTENSION);
+    $file_extension = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
     $new_filename = 'image_' . uniqid() . '.' . $file_extension;
     $upload_path = $full_dir . $new_filename;
     $relative_path = 'uploads/' . $user_dir . '/' . $product_dir . '/' . $new_filename;
@@ -454,7 +458,7 @@ function handle_bulk_product_image_upload_ctr($files, $user_id, $product_id)
         }
 
         // Generate filename
-        $file_extension = pathinfo($files['name'][$i], PATHINFO_EXTENSION);
+        $file_extension = strtolower(pathinfo($files['name'][$i], PATHINFO_EXTENSION));
         $new_filename = 'image_' . ($i + 1) . '_' . uniqid() . '.' . $file_extension;
         $upload_path = $full_dir . $new_filename;
         $relative_path = 'uploads/' . $user_dir . '/' . $product_dir . '/' . $new_filename;
@@ -474,3 +478,4 @@ function handle_bulk_product_image_upload_ctr($files, $user_id, $product_id)
         'errors' => $errors
     ];
 }
+?>

@@ -1,6 +1,6 @@
 <?php
-
-header('Content-Type: application/json');
+// Set JSON header FIRST
+header('Content-Type: application/json; charset=utf-8');
 
 require_once '../settings/core.php';
 require_once '../controllers/product_controller.php';
@@ -106,9 +106,13 @@ try {
     ]);
 
 } catch (Exception $e) {
+    error_log('Add product error: ' . $e->getMessage());
     echo json_encode([
         'success' => false,
-        'message' => 'An error occurred while creating product. Please try again.'
+        'message' => 'An error occurred while creating product. Please try again.',
+        'error_details' => $e->getMessage()
     ]);
 }
+
+exit();
 ?>

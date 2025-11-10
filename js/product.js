@@ -113,7 +113,7 @@ function handleImagePreview(e) {
 
     if (files.length > 0) {
         fileNameEl.textContent = `Selected: ${files.length} file(s)`;
-        imagePreview.innerHTML = ''; // Clear previous previews
+        imagePreview.innerHTML = '';
 
         files.forEach((file, index) => {
             if (file.type.startsWith('image/')) {
@@ -141,16 +141,13 @@ function handleImagePreview(e) {
  * @param {number} index - Index of file to remove
  */
 function removeImagePreview(index) {
-    // Remove from selectedFiles array
     selectedFiles.splice(index, 1);
 
-    // Update file input
     const input = document.getElementById('product_images');
     const dataTransfer = new DataTransfer();
     selectedFiles.forEach(file => dataTransfer.items.add(file));
     input.files = dataTransfer.files;
 
-    // Trigger preview update
     handleImagePreview({ target: input });
 }
 
@@ -175,7 +172,7 @@ async function fetchProducts() {
             displayProducts([]);
         }
     } catch (error) {
-        console.error('Error fetching products:', error);
+        console.error('Failed to fetch products:', error);
         showModal('Failed to load products. Please refresh the page.', false);
     }
 }
@@ -220,6 +217,9 @@ function createProductCard(product) {
     const description = product.product_desc ?
         escapeHtml(product.product_desc).substring(0, 100) + (product.product_desc.length > 100 ? '...' : '') :
         'No description available';
+
+    // Use customer_name instead of user_name
+    const ownerName = product.customer_name || 'Unknown';
 
     return `
         <div class="product-card">
@@ -268,9 +268,9 @@ async function addProduct(formData) {
         if (result.success) {
             showModal(result.message + (result.images_uploaded > 0 ? ` (${result.images_uploaded} image(s) uploaded)` : ''), true);
             resetForm();
-            await fetchProducts(); // Reload products
+            await fetchProducts();
         } else {
-            showModal(result.message, false);
+            showModal(result.message || 'Failed to add product', false);
         }
     } catch (error) {
         console.error('Error adding product:', error);
@@ -294,9 +294,9 @@ async function updateProduct(formData) {
         if (result.success) {
             showModal(result.message + (result.images_uploaded > 0 ? ` (${result.images_uploaded} new image(s) uploaded)` : ''), true);
             resetForm();
-            await fetchProducts(); // Reload products
+            await fetchProducts();
         } else {
-            showModal(result.message, false);
+            showModal(result.message || 'Failed to update product', false);
         }
     } catch (error) {
         console.error('Error updating product:', error);
@@ -328,9 +328,9 @@ async function deleteProduct(productId, productTitle) {
 
         if (result.success) {
             showModal(result.message, true);
-            await fetchProducts(); // Reload products
+            await fetchProducts();
         } else {
-            showModal(result.message, false);
+            showModal(result.message || 'Failed to delete product', false);
         }
     } catch (error) {
         console.error('Error deleting product:', error);
@@ -344,7 +344,6 @@ async function deleteProduct(productId, productTitle) {
  */
 async function editProduct(productId) {
     try {
-        // Fetch product details
         const response = await fetch(`../actions/fetch_product_action.php`, {
             method: 'GET'
         });
