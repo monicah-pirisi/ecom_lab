@@ -60,6 +60,13 @@ class Product extends db_connection
         if (!isset($data['product_cat']) || !isset($data['product_brand']) ||
             !isset($data['product_title']) || !isset($data['product_price']) ||
             !isset($data['user_id'])) {
+            error_log("Product creation failed: Missing required fields");
+            return false;
+        }
+
+        // Check database connection
+        if (!$this->db) {
+            error_log("Product creation failed: No database connection");
             return false;
         }
 
@@ -68,21 +75,35 @@ class Product extends db_connection
              product_image, product_keywords, user_id)
             VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
 
+        if (!$stmt) {
+            error_log("Product creation failed: " . $this->db->error);
+            return false;
+        }
+
+        $product_desc = $data['product_desc'] ?? '';
+        $product_image = $data['product_image'] ?? '';
+        $product_keywords = $data['product_keywords'] ?? '';
+
         $stmt->bind_param("iisdsssi",
             $data['product_cat'],
             $data['product_brand'],
             $data['product_title'],
             $data['product_price'],
-            $data['product_desc'] ?? '',
-            $data['product_image'] ?? '',
-            $data['product_keywords'] ?? '',
+            $product_desc,
+            $product_image,
+            $product_keywords,
             $data['user_id']
         );
 
         if ($stmt->execute()) {
-            return $this->db->insert_id;
+            $insert_id = $this->db->insert_id;
+            $stmt->close();
+            return $insert_id;
+        } else {
+            error_log("Product creation failed: " . $stmt->error);
+            $stmt->close();
+            return false;
         }
-        return false;
     }
 
     /**

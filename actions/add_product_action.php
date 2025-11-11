@@ -1,9 +1,14 @@
 <?php
-// Set JSON header FIRST
-header('Content-Type: application/json; charset=utf-8');
+// Error reporting for debugging (turn off in production)
+error_reporting(E_ALL);
+ini_set('display_errors', 0);
+ini_set('log_errors', 1);
 
-// Start output buffering to catch any unwanted output
+// Start output buffering FIRST to catch any unwanted output
 ob_start();
+
+// Set JSON header
+header('Content-Type: application/json; charset=utf-8');
 
 try {
     // Require files
@@ -40,6 +45,18 @@ try {
         exit();
     }
 
+    // Get user_id from session - ensure it exists
+    if (!isset($_SESSION['user_id']) || empty($_SESSION['user_id'])) {
+        ob_clean();
+        echo json_encode([
+            'success' => false,
+            'message' => 'Invalid session. Please login again.'
+        ]);
+        exit();
+    }
+
+    $user_id = $_SESSION['user_id'];
+
     // Get form data
     $product_title = trim($_POST['product_title'] ?? '');
     $product_cat = (int)($_POST['product_cat'] ?? 0);
@@ -47,7 +64,6 @@ try {
     $product_price = floatval($_POST['product_price'] ?? 0);
     $product_desc = trim($_POST['product_desc'] ?? '');
     $product_keywords = trim($_POST['product_keywords'] ?? '');
-    $user_id = $_SESSION['user_id'];
 
     // Validate data
     $validation = validate_product_data_ctr([
@@ -116,13 +132,22 @@ try {
 
 } catch (Exception $e) {
     ob_clean();
-    error_log('Add product error: ' . $e->getMessage());
+    error_log('Add product error: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
     echo json_encode([
         'success' => false,
         'message' => 'An error occurred while creating product.',
         'error' => $e->getMessage()
     ]);
+} catch (Error $e) {
+    ob_clean();
+    error_log('Add product fatal error: ' . $e->getMessage() . ' in ' . $e->getFile() . ' on line ' . $e->getLine());
+    echo json_encode([
+        'success' => false,
+        'message' => 'A fatal error occurred.',
+        'error' => $e->getMessage()
+    ]);
 }
 
+ob_end_flush();
 exit();
 ?>
