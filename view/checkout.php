@@ -569,7 +569,7 @@ $user_phone = $_SESSION['user_phone'] ?? '';
                                 <img src="<?php echo htmlspecialchars($image_path); ?>"
                                      alt="<?php echo htmlspecialchars($item['product_title']); ?>"
                                      class="order-item-image"
-                                     onerror="this.src='../images/default-product.png'">
+                                     onerror="this.onerror=null; this.src='../images/default-product.png'">
                                 <div class="order-item-details">
                                     <div class="order-item-title"><?php echo htmlspecialchars($item['product_title']); ?></div>
                                     <div class="order-item-price">$<?php echo number_format($item['product_price'], 2); ?></div>

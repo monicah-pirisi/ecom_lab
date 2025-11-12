@@ -367,7 +367,7 @@ $product_count = count($products);
                             <img src="<?php echo htmlspecialchars($image_path); ?>"
                                  alt="<?php echo htmlspecialchars($product['product_title']); ?>"
                                  class="product-image"
-                                 onerror="this.src='../../images/default-product.png'">
+                                 onerror="this.onerror=null; this.src='../../images/default-product.png'">
                         </div>
                         <div class="product-details">
                             <h3 class="product-title">

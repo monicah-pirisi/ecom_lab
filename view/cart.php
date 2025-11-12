@@ -366,7 +366,7 @@ $cart_count = is_array($cart_items) ? count($cart_items) : 0;
                                             <img src="<?php echo htmlspecialchars($image_path); ?>"
                                                  alt="<?php echo htmlspecialchars($item['product_title']); ?>"
                                                  class="product-image-cart"
-                                                 onerror="this.src='../images/default-product.png'">
+                                                 onerror="this.onerror=null; this.src='../images/default-product.png'">
                                         </div>
 
                                         <!-- Product Details -->

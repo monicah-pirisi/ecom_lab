@@ -10,121 +10,56 @@ require_once '../settings/core.php';
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" rel="stylesheet">
+    <link href="../css/register.css" rel="stylesheet">
     <style>
-        .btn-custom {
-            background-color: #D19C97;
-            border-color: #D19C97;
-            color: #fff;
-            transition: background-color 0.3s, border-color 0.3s;
+        /* Role radio button custom styling for better visibility */
+        .custom-radio .form-check-input {
+            display: none;
         }
 
-        .btn-custom:hover {
-            background-color: #b77a7a;
-            border-color: #b77a7a;
-        }
-
-        .highlight {
-            color: #D19C97;
-            transition: color 0.3s;
-        }
-
-        .highlight:hover {
-            color: #b77a7a;
-        }
-
-        body {
-            /* Base background color */
-            background-color: #f8f9fa;
-
-            /* Gradient-like grid using repeating-linear-gradients */
-            background-image:
-                repeating-linear-gradient(0deg,
-                    #b77a7a,
-                    #b77a7a 1px,
-                    transparent 1px,
-                    transparent 20px),
-                repeating-linear-gradient(90deg,
-                    #b77a7a,
-                    #b77a7a 1px,
-                    transparent 1px,
-                    transparent 20px),
-                linear-gradient(rgba(183, 122, 122, 0.1),
-                    rgba(183, 122, 122, 0.1));
-
-            /* Blend the gradients for a subtle overlay effect */
-            background-blend-mode: overlay;
-
-            /* Define the size of the grid */
-            background-size: 20px 20px;
-
-            /* Ensure the background covers the entire viewport */
-            min-height: 100vh;
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-        }
-
-        .register-container {
-            margin-top: 50px;
-        }
-
-        .card {
-            border: none;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-
-        .card-header {
-            background-color: #D19C97;
-            color: #fff;
-        }
-
-        .custom-radio .form-check-input:checked+.form-check-label::before {
-            background-color: #D19C97;
-            border-color: #D19C97;
-        }
-
-        .form-check-label {
+        .custom-radio .form-check-label {
             position: relative;
             padding-left: 2rem;
             cursor: pointer;
+            color: #333;
+            font-weight: 500;
         }
 
-        .form-check-label::before {
+        .custom-radio .form-check-label::before {
             content: "";
             position: absolute;
             left: 0;
             top: 50%;
             transform: translateY(-50%);
-            width: 1rem;
-            height: 1rem;
-            border: 2px solid #D19C97;
+            width: 1.2rem;
+            height: 1.2rem;
+            border: 2px solid #667eea;
             border-radius: 50%;
             background-color: #fff;
-            transition: background-color 0.3s, border-color 0.3s;
+            transition: all 0.3s ease;
         }
 
-        .form-check-input:focus+.form-check-label::before {
-            box-shadow: 0 0 0 0.2rem rgba(209, 156, 151, 0.5);
+        .custom-radio .form-check-input:checked + .form-check-label::before {
+            background-color: #667eea;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.2);
         }
 
-        .animate-pulse-custom {
-            animation: pulse 2s infinite;
+        .custom-radio .form-check-input:checked + .form-check-label::after {
+            content: "";
+            position: absolute;
+            left: 0.4rem;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 0.4rem;
+            height: 0.4rem;
+            border-radius: 50%;
+            background-color: #fff;
         }
 
-        @keyframes pulse {
-            0% {
-                transform: scale(1);
-            }
-
-            50% {
-                transform: scale(1.05);
-            }
-
-            100% {
-                transform: scale(1);
-            }
+        .custom-radio .form-check-label:hover::before {
+            border-color: #764ba2;
+            transform: translateY(-50%) scale(1.1);
         }
     </style>
 </head>

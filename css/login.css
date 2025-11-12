@@ -1,0 +1,140 @@
+/* Login Page Styling - Matching Webapp Theme */
+:root {
+    --primary-gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    --accent-gradient: linear-gradient(45deg, #D19C97, #b77a7a);
+    --text-dark: #333;
+    --text-light: #6c757d;
+    --border-color: #e9ecef;
+}
+
+body {
+    background: var(--primary-gradient);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.login-container {
+    padding: 50px 20px;
+}
+
+.card {
+    border: none;
+    border-radius: 20px;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+    overflow: hidden;
+    animation: fadeInUp 0.6s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.card-header {
+    background: var(--primary-gradient);
+    color: white;
+    padding: 30px;
+    border-bottom: none;
+}
+
+.card-header h4 {
+    font-size: 2em;
+    font-weight: 700;
+    margin: 0;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+}
+
+.card-body {
+    padding: 40px;
+    background: white;
+}
+
+.form-label {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 8px;
+}
+
+.form-label i {
+    color: #667eea;
+    margin-left: 5px;
+}
+
+.form-control {
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    padding: 12px 15px;
+    font-size: 1em;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+}
+
+.btn-custom {
+    background: var(--accent-gradient);
+    border: none;
+    color: white;
+    padding: 14px;
+    font-size: 1.1em;
+    font-weight: 600;
+    border-radius: 10px;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.btn-custom:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(209, 156, 151, 0.4);
+    color: white;
+}
+
+.btn-custom:active {
+    transform: translateY(0);
+}
+
+.card-footer {
+    background: #f8f9fa;
+    padding: 20px;
+    border-top: 1px solid var(--border-color);
+    color: var(--text-light);
+}
+
+.highlight {
+    color: #667eea;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.3s ease;
+}
+
+.highlight:hover {
+    color: #764ba2;
+    text-decoration: underline;
+}
+
+/* Loading state */
+.btn-custom:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .card-header h4 {
+        font-size: 1.5em;
+    }
+
+    .card-body {
+        padding: 30px 20px;
+    }
+}

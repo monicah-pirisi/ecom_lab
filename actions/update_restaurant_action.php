@@ -1,7 +1,7 @@
 <?php
 /**
- * Add Restaurant Action
- * Handles restaurant creation with image upload
+ * Update Restaurant Action
+ * Handles restaurant updates with optional image upload
  */
 
 // Start output buffering to prevent any output before JSON
@@ -20,7 +20,7 @@ try {
     if (!isLoggedIn()) {
         echo json_encode([
             'success' => false,
-            'message' => 'Please log in to add a restaurant'
+            'message' => 'Please log in to update a restaurant'
         ]);
         exit();
     }
@@ -44,8 +44,40 @@ try {
         exit();
     }
 
+    // Get restaurant ID
+    $restaurant_id = isset($_POST['restaurant_id']) ? intval($_POST['restaurant_id']) : 0;
+
+    if ($restaurant_id <= 0) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Invalid restaurant ID'
+        ]);
+        exit();
+    }
+
+    // Fetch existing restaurant data
+    $existing_restaurant = get_restaurant_by_id_ctr($restaurant_id);
+
+    if (!$existing_restaurant) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'Restaurant not found'
+        ]);
+        exit();
+    }
+
+    // Verify the restaurant belongs to the logged-in owner
+    $owner_id = $_SESSION['user_id'];
+    if ($existing_restaurant['owner_id'] != $owner_id) {
+        echo json_encode([
+            'success' => false,
+            'message' => 'You do not have permission to update this restaurant'
+        ]);
+        exit();
+    }
+
     // Validate required fields
-    $required_fields = ['restaurant_name', 'address', 'city', 'country', 'phone'];
+    $required_fields = ['restaurant_name', 'address', 'city', 'country', 'phone', 'status'];
     foreach ($required_fields as $field) {
         if (empty($_POST[$field])) {
             echo json_encode([
@@ -56,11 +88,8 @@ try {
         }
     }
 
-    $owner_id = $_SESSION['user_id'];
-
-    // Prepare restaurant data
+    // Prepare restaurant data - keep existing image by default
     $restaurant_data = [
-        'owner_id' => $owner_id,
         'restaurant_name' => $_POST['restaurant_name'],
         'description' => $_POST['description'] ?? '',
         'cuisine_type' => $_POST['cuisine_type'] ?? '',
@@ -70,10 +99,11 @@ try {
         'phone' => $_POST['phone'],
         'email' => $_POST['email'] ?? '',
         'opening_hours' => $_POST['opening_hours'] ?? '',
-        'restaurant_image' => ''
+        'status' => $_POST['status'],
+        'restaurant_image' => $existing_restaurant['restaurant_image'] ?? ''
     ];
 
-    // Handle image upload
+    // Handle image upload (optional - only if new image is uploaded)
     if (isset($_FILES['restaurant_image']) && $_FILES['restaurant_image']['error'] !== UPLOAD_ERR_NO_FILE) {
         $file = $_FILES['restaurant_image'];
 
@@ -141,10 +171,17 @@ try {
 
         // Move uploaded file
         if (move_uploaded_file($file['tmp_name'], $upload_path)) {
+            // Delete old image if it exists and is different
+            $old_image = $existing_restaurant['restaurant_image'] ?? '';
+            if (!empty($old_image) && file_exists('../' . $old_image)) {
+                @unlink('../' . $old_image);
+                error_log("Deleted old restaurant image: " . $old_image);
+            }
+
             $restaurant_data['restaurant_image'] = $relative_path;
             error_log("Restaurant image uploaded successfully: " . $relative_path);
         } else {
-            error_log("Restaurant image upload error: move_uploaded_file failed - " . error_get_last()['message']);
+            error_log("Restaurant image upload error: move_uploaded_file failed");
             echo json_encode([
                 'success' => false,
                 'message' => 'Failed to save uploaded image. Please try again.'
@@ -153,15 +190,15 @@ try {
         }
     }
 
-    // Create restaurant
-    $restaurant_id = create_restaurant_ctr($restaurant_data);
+    // Update restaurant
+    $result = update_restaurant_ctr($restaurant_id, $restaurant_data);
 
-    if ($restaurant_id) {
+    if ($result) {
         // Clear output buffer and send success response
         ob_end_clean();
         echo json_encode([
             'success' => true,
-            'message' => 'Restaurant added successfully!',
+            'message' => 'Restaurant updated successfully!',
             'restaurant_id' => $restaurant_id
         ]);
     } else {
@@ -169,14 +206,14 @@ try {
         ob_end_clean();
         echo json_encode([
             'success' => false,
-            'message' => 'Failed to add restaurant. Please try again.'
+            'message' => 'Failed to update restaurant. Please try again.'
         ]);
     }
 
 } catch (Exception $e) {
     // Clear output buffer and send error response
     ob_end_clean();
-    error_log("Error in add_restaurant_action: " . $e->getMessage());
+    error_log("Error in update_restaurant_action: " . $e->getMessage());
     echo json_encode([
         'success' => false,
         'message' => 'An error occurred. Please try again.'

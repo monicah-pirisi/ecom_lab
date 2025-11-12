@@ -184,6 +184,26 @@ function add_review_ctr($restaurant_id, $customer_id, $rating, $comment)
 }
 
 /**
+ * Check if customer already reviewed a restaurant
+ */
+function check_existing_review_ctr($restaurant_id, $customer_id)
+{
+    // Validate IDs
+    if (!is_numeric($restaurant_id) || $restaurant_id <= 0) {
+        error_log("Invalid restaurant ID: $restaurant_id");
+        return false;
+    }
+
+    if (!is_numeric($customer_id) || $customer_id <= 0) {
+        error_log("Invalid customer ID: $customer_id");
+        return false;
+    }
+
+    $restaurant = new Restaurant();
+    return $restaurant->checkExistingReview($restaurant_id, $customer_id);
+}
+
+/**
  * Get reviews for restaurant
  */
 function get_restaurant_reviews_ctr($restaurant_id)

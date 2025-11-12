@@ -304,7 +304,7 @@ $restaurant_count = is_array($restaurants) ? count($restaurants) : 0;
                             <img src="<?php echo htmlspecialchars($image_path); ?>"
                                  alt="<?php echo htmlspecialchars($restaurant['restaurant_name']); ?>"
                                  class="restaurant-image"
-                                 onerror="this.src='../../images/default-restaurant.png'">
+                                 onerror="this.onerror=null; this.src='../../images/default-restaurant.png'">
                         </div>
 
                         <!-- Restaurant Details -->
