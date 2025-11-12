@@ -184,7 +184,7 @@ async function confirmPayment() {
         formData.append('payment_method', paymentMethod);
 
         // Send request to process checkout
-        const response = await fetch('actions/process_checkout_action.php', {
+        const response = await fetch('../actions/process_checkout_action.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',

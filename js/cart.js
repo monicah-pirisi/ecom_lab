@@ -59,7 +59,7 @@ async function addToCart(productId, quantity = 1, showMessage = true) {
         formData.append('quantity', quantity);
         formData.append('csrf_token', getCSRFToken());
 
-        const response = await fetch('actions/add_to_cart_action.php', {
+        const response = await fetch('../actions/add_to_cart_action.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -98,7 +98,7 @@ async function updateCartQuantity(productId, quantity) {
         formData.append('quantity', quantity);
         formData.append('csrf_token', getCSRFToken());
 
-        const response = await fetch('actions/update_quantity_action.php', {
+        const response = await fetch('../actions/update_quantity_action.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -157,7 +157,7 @@ async function removeFromCart(productId) {
         formData.append('product_id', productId);
         formData.append('csrf_token', getCSRFToken());
 
-        const response = await fetch('actions/remove_from_cart_action.php', {
+        const response = await fetch('../actions/remove_from_cart_action.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
@@ -210,7 +210,7 @@ async function emptyCart() {
         const formData = new URLSearchParams();
         formData.append('csrf_token', getCSRFToken());
 
-        const response = await fetch('actions/empty_cart_action.php', {
+        const response = await fetch('../actions/empty_cart_action.php', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
