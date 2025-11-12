@@ -62,7 +62,8 @@ try {
     $role = intval($_POST['role']);
 
     // Validate role value
-    if (!in_array($role, [1, 2])) {
+    // Role 1 = Administrator, Role 2 = Restaurant Owner, Role 3 = Customer
+    if (!in_array($role, [1, 2, 3])) {
         $response['status'] = 'error';
         $response['message'] = 'Invalid role selected';
         echo json_encode($response);

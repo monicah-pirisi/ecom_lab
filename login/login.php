@@ -22,11 +22,11 @@
                         <?php csrfTokenField(); ?>
                         <div class="mb-3">
                             <label for="email" class="form-label">Email <i class="fa fa-envelope"></i></label>
-                            <input type="email" class="form-control" id="email" name="email" required>
+                            <input type="email" class="form-control" id="email" name="email" autocomplete="email" required>
                         </div>
                         <div class="mb-4">
                             <label for="password" class="form-label">Password <i class="fa fa-lock"></i></label>
-                            <input type="password" class="form-control" id="password" name="password" required>
+                            <input type="password" class="form-control" id="password" name="password" autocomplete="current-password" required>
                         </div>
                         <button type="submit" class="btn btn-custom w-100">Login</button>
                     </form>

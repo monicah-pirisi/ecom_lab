@@ -142,23 +142,23 @@ require_once '../settings/core.php';
                             <?php csrfTokenField(); ?>
                             <div class="mb-3">
                                 <label for="name" class="form-label">Name <i class="fa fa-user"></i></label>
-                                <input type="text" class="form-control animate__animated animate__fadeInUp" id="name" name="name" required>
+                                <input type="text" class="form-control animate__animated animate__fadeInUp" id="name" name="name" autocomplete="name" required>
                             </div>
                             <div class="mb-3">
                                 <label for="email" class="form-label">Email <i class="fa fa-envelope"></i></label>
-                                <input type="email" class="form-control animate__animated animate__fadeInUp" id="email" name="email" required>
+                                <input type="email" class="form-control animate__animated animate__fadeInUp" id="email" name="email" autocomplete="email" required>
                             </div>
                             <div class="mb-3">
                                 <label for="password" class="form-label">Password <i class="fa fa-lock"></i></label>
-                                <input type="password" class="form-control animate__animated animate__fadeInUp" id="password" name="password" required>
+                                <input type="password" class="form-control animate__animated animate__fadeInUp" id="password" name="password" autocomplete="new-password" required>
                             </div>
                             <div class="mb-3">
                                 <label for="phone_number" class="form-label">Phone Number <i class="fa fa-phone"></i></label>
-                                <input type="text" class="form-control animate__animated animate__fadeInUp" id="phone_number" name="phone_number" required>
+                                <input type="tel" class="form-control animate__animated animate__fadeInUp" id="phone_number" name="phone_number" autocomplete="tel" required>
                             </div>
                             <div class="mb-3">
                                 <label for="country" class="form-label">Country <i class="fa fa-globe"></i></label>
-                                <select class="form-control animate__animated animate__fadeInUp" id="country" name="country" required>
+                                <select class="form-control animate__animated animate__fadeInUp" id="country" name="country" autocomplete="country-name" required>
                                     <option value="">Select Country</option>
                                     <option value="Afghanistan">Afghanistan</option>
                                     <option value="Albania">Albania</option>
@@ -244,7 +244,7 @@ require_once '../settings/core.php';
                             </div>
                             <div class="mb-3">
                                 <label for="city" class="form-label">City <i class="fa fa-map-marker-alt"></i></label>
-                                <input type="text" class="form-control animate__animated animate__fadeInUp" id="city" name="city" required>
+                                <input type="text" class="form-control animate__animated animate__fadeInUp" id="city" name="city" autocomplete="address-level2" required>
                             </div>
                             <div class="mb-4">
                                 <label class="form-label">Register As</label>

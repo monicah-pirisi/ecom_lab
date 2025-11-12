@@ -17,8 +17,16 @@ $user_city = isset($_SESSION['user_city']) ? $_SESSION['user_city'] : 'Not speci
 $user_phone = isset($_SESSION['user_phone']) ? $_SESSION['user_phone'] : 'Not provided';
 
 // Determine user type
-$user_type = ($user_role == 1) ? 'Administrator' : 'Restaurant Owner';
-$welcome_message = ($user_role == 1) ? 'Welcome to your admin dashboard!' : 'Welcome to your restaurant owner dashboard!';
+if ($user_role == 1) {
+    $user_type = 'Administrator';
+    $welcome_message = 'Welcome to your admin dashboard!';
+} elseif ($user_role == 2) {
+    $user_type = 'Restaurant Owner';
+    $welcome_message = 'Welcome to your restaurant owner dashboard!';
+} else {
+    $user_type = 'Customer';
+    $welcome_message = 'Welcome to your customer dashboard!';
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -377,6 +385,28 @@ $welcome_message = ($user_role == 1) ? 'Welcome to your admin dashboard!' : 'Wel
                                 <i class="fas fa-users me-1"></i>Users
                             </a>
                         </li>
+                    <?php elseif ($user_role == 2): ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="view/owner/my_restaurants.php">
+                                <i class="fas fa-store me-1"></i>My Restaurants
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="view/owner/my_products.php">
+                                <i class="fas fa-box-open me-1"></i>My Products
+                            </a>
+                        </li>
+                    <?php else: ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="view/all_product.php">
+                                <i class="fas fa-shopping-bag me-1"></i>Products
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="view/cart.php">
+                                <i class="fas fa-shopping-cart me-1"></i>Cart
+                            </a>
+                        </li>
                     <?php endif; ?>
                     <li class="nav-item">
                         <a class="nav-link" href="login/logout.php" onclick="return confirm('Are you sure you want to logout?')">
@@ -396,7 +426,11 @@ $welcome_message = ($user_role == 1) ? 'Welcome to your admin dashboard!' : 'Wel
             </h1>
             <p class="welcome-subtitle"><?php echo htmlspecialchars($welcome_message, ENT_QUOTES, 'UTF-8'); ?></p>
             <span class="role-badge">
-                <i class="fas fa-<?php echo ($user_role == 1) ? 'shield-alt' : 'store'; ?> me-2"></i>
+                <i class="fas fa-<?php
+                    if ($user_role == 1) echo 'shield-alt';
+                    elseif ($user_role == 2) echo 'store';
+                    else echo 'user';
+                ?> me-2"></i>
                 <?php echo htmlspecialchars($user_type, ENT_QUOTES, 'UTF-8'); ?>
             </span>
         </div>
@@ -451,7 +485,11 @@ $welcome_message = ($user_role == 1) ? 'Welcome to your admin dashboard!' : 'Wel
 
                     <div class="info-item">
                         <div class="info-icon">
-                            <i class="fas fa-<?php echo ($user_role == 1) ? 'shield-alt' : 'store'; ?>"></i>
+                            <i class="fas fa-<?php
+                                if ($user_role == 1) echo 'shield-alt';
+                                elseif ($user_role == 2) echo 'store';
+                                else echo 'user';
+                            ?>"></i>
                         </div>
                         <span class="info-label">Role:</span>
                         <span class="info-value"><?php echo htmlspecialchars($user_type, ENT_QUOTES, 'UTF-8'); ?></span>
@@ -503,7 +541,7 @@ $welcome_message = ($user_role == 1) ? 'Welcome to your admin dashboard!' : 'Wel
                             <a href="#" class="btn btn-outline-custom" onclick="alert('Feature coming soon!')">
                                 <i class="fas fa-cog me-2"></i>Settings
                             </a>
-                        <?php else: ?>
+                        <?php elseif ($user_role == 2): ?>
                             <a href="view/owner/add_restaurant.php" class="btn btn-custom">
                                 <i class="fas fa-plus me-2"></i>Add Restaurant
                             </a>
@@ -521,6 +559,20 @@ $welcome_message = ($user_role == 1) ? 'Welcome to your admin dashboard!' : 'Wel
                             </a>
                             <a href="view/owner/edit_profile.php" class="btn btn-outline-custom">
                                 <i class="fas fa-edit me-2"></i>Edit Profile
+                            </a>
+                        <?php else: ?>
+                            <!-- Customer (Role 3) Actions -->
+                            <a href="view/all_product.php" class="btn btn-custom">
+                                <i class="fas fa-shopping-bag me-2"></i>Browse Products
+                            </a>
+                            <a href="view/cart.php" class="btn btn-custom">
+                                <i class="fas fa-shopping-cart me-2"></i>My Cart
+                            </a>
+                            <a href="#" class="btn btn-outline-custom" onclick="alert('Feature coming soon!')">
+                                <i class="fas fa-history me-2"></i>Order History
+                            </a>
+                            <a href="view/owner/edit_profile.php" class="btn btn-outline-custom">
+                                <i class="fas fa-user-edit me-2"></i>Edit Profile
                             </a>
                         <?php endif; ?>
                         
