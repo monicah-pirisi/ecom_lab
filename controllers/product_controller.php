@@ -478,4 +478,153 @@ function handle_bulk_product_image_upload_ctr($files, $user_id, $product_id)
         'errors' => $errors
     ];
 }
+
+/**
+ * View all products with pagination
+ * @param int $limit - Products per page
+ * @param int $offset - Starting position
+ * @return array
+ */
+function view_all_products_ctr($limit = 10, $offset = 0)
+{
+    $product = new Product();
+    $products = $product->view_all_products($limit, $offset);
+    $total = $product->getProductCount();
+
+    if ($products !== false) {
+        return [
+            'success' => true,
+            'products' => $products,
+            'total' => $total,
+            'limit' => $limit,
+            'offset' => $offset
+        ];
+    } else {
+        return [
+            'success' => false,
+            'message' => 'Failed to retrieve products',
+            'products' => [],
+            'total' => 0
+        ];
+    }
+}
+
+/**
+ * Search products with pagination
+ * @param string $query - Search term
+ * @param int $limit - Products per page
+ * @param int $offset - Starting position
+ * @return array
+ */
+function search_products_paginated_ctr($query, $limit = 10, $offset = 0)
+{
+    $product = new Product();
+    $products = $product->search_products($query, $limit, $offset);
+    $total = $product->getSearchCount($query);
+
+    if ($products !== false) {
+        return [
+            'success' => true,
+            'products' => $products,
+            'total' => $total,
+            'limit' => $limit,
+            'offset' => $offset,
+            'query' => $query
+        ];
+    } else {
+        return [
+            'success' => false,
+            'message' => 'Search failed',
+            'products' => [],
+            'total' => 0
+        ];
+    }
+}
+
+/**
+ * Filter products by category with pagination
+ * @param int $cat_id - Category ID
+ * @param int $limit - Products per page
+ * @param int $offset - Starting position
+ * @return array
+ */
+function filter_products_by_category_ctr($cat_id, $limit = 10, $offset = 0)
+{
+    $product = new Product();
+    $products = $product->filter_products_by_category($cat_id, $limit, $offset);
+    $total = $product->getCategoryProductCount($cat_id);
+
+    if ($products !== false) {
+        return [
+            'success' => true,
+            'products' => $products,
+            'total' => $total,
+            'limit' => $limit,
+            'offset' => $offset,
+            'category_id' => $cat_id
+        ];
+    } else {
+        return [
+            'success' => false,
+            'message' => 'Failed to retrieve products',
+            'products' => [],
+            'total' => 0
+        ];
+    }
+}
+
+/**
+ * Filter products by brand with pagination
+ * @param int $brand_id - Brand ID
+ * @param int $limit - Products per page
+ * @param int $offset - Starting position
+ * @return array
+ */
+function filter_products_by_brand_ctr($brand_id, $limit = 10, $offset = 0)
+{
+    $product = new Product();
+    $products = $product->filter_products_by_brand($brand_id, $limit, $offset);
+    $total = $product->getBrandProductCount($brand_id);
+
+    if ($products !== false) {
+        return [
+            'success' => true,
+            'products' => $products,
+            'total' => $total,
+            'limit' => $limit,
+            'offset' => $offset,
+            'brand_id' => $brand_id
+        ];
+    } else {
+        return [
+            'success' => false,
+            'message' => 'Failed to retrieve products',
+            'products' => [],
+            'total' => 0
+        ];
+    }
+}
+
+/**
+ * View single product details
+ * @param int $product_id - Product ID
+ * @return array
+ */
+function view_single_product_ctr($product_id)
+{
+    $product = new Product();
+    $result = $product->view_single_product($product_id);
+
+    if ($result) {
+        return [
+            'success' => true,
+            'product' => $result
+        ];
+    } else {
+        return [
+            'success' => false,
+            'message' => 'Product not found'
+        ];
+    }
+}
 ?>

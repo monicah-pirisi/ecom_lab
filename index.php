@@ -30,10 +30,24 @@ if (file_exists($core_file)) {
     }
 }
 
-// Check if user is logged in and redirect if needed
-if (function_exists('isLoggedIn') && isLoggedIn()) {
-    header('Location: dashboard.php');
-    exit();
+// Don't redirect logged-in users anymore - let them see the homepage too
+// Load categories and brands for filters
+$categories = [];
+$brands = [];
+
+if (file_exists('controllers/category_controller.php') && file_exists('controllers/brand_controller.php')) {
+    require_once 'controllers/category_controller.php';
+    require_once 'controllers/brand_controller.php';
+
+    try {
+        $cat_result = get_categories_ctr();
+        $categories = $cat_result['categories'] ?? [];
+
+        $brand_result = get_all_brands_ctr();
+        $brands = $brand_result['brands'] ?? [];
+    } catch (Exception $e) {
+        error_log("Error loading filters: " . $e->getMessage());
+    }
 }
 
 // Clean any output buffer content
@@ -451,6 +465,11 @@ ob_clean();
                         </a>
                     </li>
                     <li class="nav-item">
+                        <a class="nav-link" href="view/all_product.php">
+                            <i class="fas fa-shopping-bag me-1"></i>All Products
+                        </a>
+                    </li>
+                    <li class="nav-item">
                         <a class="nav-link" href="#features">
                             <i class="fas fa-star me-1"></i>Features
                         </a>
@@ -470,8 +489,8 @@ ob_clean();
                     <?php elseif (function_exists('isAdmin') && isAdmin()): ?>
                         <!-- Logged in as admin: Logout | Category | Brand | Add Product -->
                         <li class="nav-item">
-                            <a class="nav-link" href="login/logout.php">
-                                <i class="fas fa-sign-out-alt me-1"></i>Logout
+                            <a class="nav-link" href="dashboard.php">
+                                <i class="fas fa-tachometer-alt me-1"></i>Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
@@ -489,8 +508,18 @@ ob_clean();
                                 <i class="fas fa-box me-1"></i>Add Product
                             </a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="login/logout.php">
+                                <i class="fas fa-sign-out-alt me-1"></i>Logout
+                            </a>
+                        </li>
                     <?php else: ?>
                         <!-- Logged in as regular user: Logout -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="dashboard.php">
+                                <i class="fas fa-tachometer-alt me-1"></i>Dashboard
+                            </a>
+                        </li>
                         <li class="nav-item">
                             <a class="nav-link" href="login/logout.php">
                                 <i class="fas fa-sign-out-alt me-1"></i>Logout
@@ -520,6 +549,52 @@ ob_clean();
                             Discover authentic African cuisine and connect with local restaurants in your area. 
                             Experience the rich flavors and vibrant culture of Africa through our curated dining platform.
                         </p>
+                        <!-- Search and Filter Section -->
+                        <div class="search-filter-section" style="background: rgba(255,255,255,0.1); backdrop-filter: blur(15px); border-radius: 20px; padding: 30px; margin-top: 30px; margin-bottom: 30px; max-width: 700px;">
+                            <form action="view/product_search_result.php" method="GET" style="margin-bottom: 20px;">
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="text"
+                                           name="query"
+                                           placeholder="Search products by name, description, or keywords..."
+                                           required
+                                           style="flex: 1; padding: 15px 20px; border: 2px solid rgba(255,255,255,0.3); border-radius: 50px; font-size: 16px; background: rgba(255,255,255,0.9);">
+                                    <button type="submit"
+                                            style="background: #D19C97; color: white; border: none; padding: 15px 35px; border-radius: 50px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
+                                        <i class="fas fa-search me-2"></i>Search
+                                    </button>
+                                </div>
+                            </form>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                                <a href="view/all_product.php" style="background: rgba(255,255,255,0.2); color: white; text-decoration: none; padding: 12px 20px; border-radius: 15px; text-align: center; font-weight: 600; transition: all 0.3s ease; border: 1px solid rgba(255,255,255,0.3);" onmouseover="this.style.background='rgba(255,255,255,0.3)'" onmouseout="this.style.background='rgba(255,255,255,0.2)'">
+                                    <i class="fas fa-shopping-bag me-2"></i>Browse All Products
+                                </a>
+                                <?php if (!empty($categories)): ?>
+                                    <select onchange="if(this.value) window.location.href='view/all_product.php?category=' + this.value;" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 12px 20px; border-radius: 15px; font-weight: 600; cursor: pointer;">
+                                        <option value="">Browse by Category</option>
+                                        <?php foreach ($categories as $cat): ?>
+                                            <option value="<?php echo $cat['cat_id']; ?>" style="color: #333;">
+                                                <?php echo htmlspecialchars($cat['cat_name'], ENT_QUOTES, 'UTF-8'); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                <?php endif; ?>
+                            </div>
+
+                            <?php if (!empty($brands)): ?>
+                                <div style="margin-top: 15px;">
+                                    <select onchange="if(this.value) window.location.href='view/all_product.php?brand=' + this.value;" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.3); padding: 12px 20px; border-radius: 15px; font-weight: 600; cursor: pointer; width: 100%;">
+                                        <option value="">Browse by Brand</option>
+                                        <?php foreach ($brands as $brand): ?>
+                                            <option value="<?php echo $brand['brand_id']; ?>" style="color: #333;">
+                                                <?php echo htmlspecialchars($brand['brand_name'], ENT_QUOTES, 'UTF-8'); ?>
+                                            </option>
+                                        <?php endforeach; ?>
+                                    </select>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+
                         <div class="hero-buttons">
                             <?php if (!function_exists('isLoggedIn') || !isLoggedIn()): ?>
                                 <a href="login/register.php" class="btn btn-custom animate__animated animate__pulse animate__infinite">

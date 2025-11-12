@@ -327,5 +327,162 @@ class Product extends db_connection
         $result = $stmt->get_result()->fetch_assoc();
         return $result['count'] > 0;
     }
+
+    /**
+     * Get all products with pagination
+     * @param int $limit - Number of products per page
+     * @param int $offset - Starting position
+     * @return array|false
+     */
+    public function view_all_products($limit = 10, $offset = 0)
+    {
+        $stmt = $this->db->prepare("SELECT p.*, c.cat_name, b.brand_name, u.customer_name
+                                    FROM products p
+                                    LEFT JOIN categories c ON p.product_cat = c.cat_id
+                                    LEFT JOIN brands b ON p.product_brand = b.brand_id
+                                    LEFT JOIN customer u ON p.user_id = u.customer_id
+                                    ORDER BY p.product_id DESC
+                                    LIMIT ? OFFSET ?");
+        $stmt->bind_param("ii", $limit, $offset);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    /**
+     * Get total count of products
+     * @return int
+     */
+    public function getProductCount()
+    {
+        $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM products");
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+        return (int)$result['total'];
+    }
+
+    /**
+     * Search products with pagination
+     * @param string $query - Search term
+     * @param int $limit - Number of products per page
+     * @param int $offset - Starting position
+     * @return array|false
+     */
+    public function search_products($query, $limit = 10, $offset = 0)
+    {
+        $search_term = "%{$query}%";
+        $stmt = $this->db->prepare("SELECT p.*, c.cat_name, b.brand_name, u.customer_name
+                                    FROM products p
+                                    LEFT JOIN categories c ON p.product_cat = c.cat_id
+                                    LEFT JOIN brands b ON p.product_brand = b.brand_id
+                                    LEFT JOIN customer u ON p.user_id = u.customer_id
+                                    WHERE p.product_title LIKE ?
+                                       OR p.product_desc LIKE ?
+                                       OR p.product_keywords LIKE ?
+                                    ORDER BY p.product_title
+                                    LIMIT ? OFFSET ?");
+        $stmt->bind_param("sssii", $search_term, $search_term, $search_term, $limit, $offset);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    /**
+     * Get count of search results
+     * @param string $query - Search term
+     * @return int
+     */
+    public function getSearchCount($query)
+    {
+        $search_term = "%{$query}%";
+        $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM products
+                                    WHERE product_title LIKE ?
+                                       OR product_desc LIKE ?
+                                       OR product_keywords LIKE ?");
+        $stmt->bind_param("sss", $search_term, $search_term, $search_term);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+        return (int)$result['total'];
+    }
+
+    /**
+     * Filter products by category with pagination
+     * @param int $cat_id - Category ID
+     * @param int $limit - Number of products per page
+     * @param int $offset - Starting position
+     * @return array|false
+     */
+    public function filter_products_by_category($cat_id, $limit = 10, $offset = 0)
+    {
+        $stmt = $this->db->prepare("SELECT p.*, c.cat_name, b.brand_name, u.customer_name
+                                    FROM products p
+                                    LEFT JOIN categories c ON p.product_cat = c.cat_id
+                                    LEFT JOIN brands b ON p.product_brand = b.brand_id
+                                    LEFT JOIN customer u ON p.user_id = u.customer_id
+                                    WHERE p.product_cat = ?
+                                    ORDER BY b.brand_name, p.product_title
+                                    LIMIT ? OFFSET ?");
+        $stmt->bind_param("iii", $cat_id, $limit, $offset);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    /**
+     * Get count of products in category
+     * @param int $cat_id - Category ID
+     * @return int
+     */
+    public function getCategoryProductCount($cat_id)
+    {
+        $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM products WHERE product_cat = ?");
+        $stmt->bind_param("i", $cat_id);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+        return (int)$result['total'];
+    }
+
+    /**
+     * Filter products by brand with pagination
+     * @param int $brand_id - Brand ID
+     * @param int $limit - Number of products per page
+     * @param int $offset - Starting position
+     * @return array|false
+     */
+    public function filter_products_by_brand($brand_id, $limit = 10, $offset = 0)
+    {
+        $stmt = $this->db->prepare("SELECT p.*, c.cat_name, b.brand_name, u.customer_name
+                                    FROM products p
+                                    LEFT JOIN categories c ON p.product_cat = c.cat_id
+                                    LEFT JOIN brands b ON p.product_brand = b.brand_id
+                                    LEFT JOIN customer u ON p.user_id = u.customer_id
+                                    WHERE p.product_brand = ?
+                                    ORDER BY c.cat_name, p.product_title
+                                    LIMIT ? OFFSET ?");
+        $stmt->bind_param("iii", $brand_id, $limit, $offset);
+        $stmt->execute();
+        return $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
+    }
+
+    /**
+     * Get count of products by brand
+     * @param int $brand_id - Brand ID
+     * @return int
+     */
+    public function getBrandProductCount($brand_id)
+    {
+        $stmt = $this->db->prepare("SELECT COUNT(*) as total FROM products WHERE product_brand = ?");
+        $stmt->bind_param("i", $brand_id);
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+        return (int)$result['total'];
+    }
+
+    /**
+     * View single product details (alias for getProductById)
+     * @param int $id - Product ID
+     * @return array|false
+     */
+    public function view_single_product($id)
+    {
+        return $this->getProductById($id);
+    }
 }
 ?>
