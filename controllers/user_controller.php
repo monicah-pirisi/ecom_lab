@@ -1,6 +1,6 @@
 <?php
 
-require_once '../classes/customer_class.php';
+require_once __DIR__ . '/../classes/customer_class.php';
 
 
 function register_user_ctr($name, $email, $password, $phone_number, $country, $city, $role)

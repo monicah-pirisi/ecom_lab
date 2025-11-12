@@ -1,5 +1,5 @@
 <?php
-include_once 'db_cred.php';
+include_once __DIR__ . '/db_cred.php';
 
 /**
  *@version 1.1

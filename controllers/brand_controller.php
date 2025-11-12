@@ -1,6 +1,6 @@
 <?php
 
-require_once '../classes/brand_class.php';
+require_once __DIR__ . '/../classes/brand_class.php';
 
 /**
  * Brand Controller - handles business logic for brand operations

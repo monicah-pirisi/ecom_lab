@@ -1,6 +1,6 @@
 <?php
 
-require_once '../settings/db_class.php';
+require_once __DIR__ . '/../settings/db_class.php';
 
 /**
  * 
