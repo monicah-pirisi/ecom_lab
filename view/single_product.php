@@ -304,6 +304,9 @@ if (!$product) {
     </style>
 </head>
 <body>
+    <!-- Hidden CSRF Token -->
+    <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
+
     <!-- Navigation -->
     <nav class="navbar navbar-expand-lg navbar-custom sticky-top">
         <div class="container">
@@ -323,6 +326,12 @@ if (!$product) {
                     <li class="nav-item">
                         <a class="nav-link-custom" href="all_product.php">
                             <i class="fas fa-shopping-bag me-1"></i>All Products
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link-custom" href="cart.php" style="position: relative;">
+                            <i class="fas fa-shopping-cart me-1"></i>Cart
+                            <span class="cart-badge" id="cart-count" style="display: none; position: absolute; top: -5px; right: -10px; background: #dc3545; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: bold;">0</span>
                         </a>
                     </li>
                     <?php if (isLoggedIn()): ?>
@@ -459,7 +468,12 @@ if (!$product) {
 
                         <!-- Action Buttons -->
                         <div class="action-buttons">
-                            <button class="btn-add-cart" onclick="alert('Add to cart feature coming soon!')">
+                            <div style="display: flex; align-items: center; gap: 15px; margin-bottom: 20px;">
+                                <label style="font-weight: 600; color: var(--text-dark);">Quantity:</label>
+                                <input type="number" id="product-quantity" value="1" min="1" max="100"
+                                       style="width: 80px; padding: 10px; border: 2px solid #e9ecef; border-radius: 8px; font-size: 16px; font-weight: 600;">
+                            </div>
+                            <button class="btn-add-cart" onclick="addToCart(<?php echo $product['product_id']; ?>, document.getElementById('product-quantity').value)">
                                 <i class="fas fa-shopping-cart me-2"></i>Add to Cart
                             </button>
                             <a href="all_product.php" class="btn-back">
@@ -476,5 +490,23 @@ if (!$product) {
     <div style="height: 60px;"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/cart.js"></script>
+    <script>
+        // Load cart count on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // Get cart count from server
+                const response = await fetch('../actions/get_cart_count_action.php');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.count !== undefined) {
+                        updateCartBadge(data.count);
+                    }
+                }
+            } catch (error) {
+                console.log('Error loading cart count:', error);
+            }
+        });
+    </script>
 </body>
 </html>

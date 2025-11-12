@@ -399,6 +399,12 @@ $total_pages = ceil($total_products / $limit);
                             <i class="fas fa-shopping-bag me-1"></i>All Products
                         </a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link-custom" href="cart.php" style="position: relative;">
+                            <i class="fas fa-shopping-cart me-1"></i>Cart
+                            <span class="cart-badge" id="cart-count" style="display: none; position: absolute; top: -5px; right: -10px; background: #dc3545; color: white; border-radius: 50%; width: 20px; height: 20px; font-size: 11px; display: flex; align-items: center; justify-content: center; font-weight: bold;">0</span>
+                        </a>
+                    </li>
                     <?php if (isLoggedIn()): ?>
                         <?php if (isAdmin()): ?>
                             <li class="nav-item">
@@ -433,6 +439,9 @@ $total_pages = ceil($total_products / $limit);
             </div>
         </div>
     </nav>
+
+    <!-- Hidden CSRF Token -->
+    <input type="hidden" name="csrf_token" value="<?php echo getCSRFToken(); ?>">
 
     <!-- Page Header -->
     <div class="page-header">
@@ -545,7 +554,7 @@ $total_pages = ceil($total_products / $limit);
                                 </div>
                             <?php endif; ?>
 
-                            <button class="btn-add-cart" onclick="event.stopPropagation(); alert('Add to cart feature coming soon!');">
+                            <button class="btn-add-cart" onclick="event.stopPropagation(); addToCart(<?php echo $product['product_id']; ?>, 1);">
                                 <i class="fas fa-shopping-cart me-2"></i>Add to Cart
                             </button>
                         </div>
@@ -592,5 +601,23 @@ $total_pages = ceil($total_products / $limit);
     <div style="height: 60px;"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/cart.js"></script>
+    <script>
+        // Load cart count on page load
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                // Get cart count from server
+                const response = await fetch('../actions/get_cart_count_action.php');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.count !== undefined) {
+                        updateCartBadge(data.count);
+                    }
+                }
+            } catch (error) {
+                console.log('Error loading cart count:', error);
+            }
+        });
+    </script>
 </body>
 </html>
