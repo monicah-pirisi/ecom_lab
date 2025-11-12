@@ -319,7 +319,7 @@ $product_count = count($products);
             <a href="../../dashboard.php" class="btn-back">
                 <i class="fas fa-arrow-left"></i> Back to Dashboard
             </a>
-            <a href="../../admin/add_product.php" class="btn-add">
+            <a href="../../admin/product.php" class="btn-add">
                 <i class="fas fa-plus"></i> Add New Product
             </a>
         </div>
@@ -381,7 +381,7 @@ $product_count = count($products);
                                 $<?php echo number_format($product['product_price'], 2); ?>
                             </div>
                             <div class="product-actions" onclick="event.stopPropagation()">
-                                <a href="../../admin/edit_product.php?id=<?php echo $product['product_id']; ?>"
+                                <a href="../../admin/product.php#product-<?php echo $product['product_id']; ?>"
                                    class="btn-edit">
                                     <i class="fas fa-edit"></i> Edit
                                 </a>
