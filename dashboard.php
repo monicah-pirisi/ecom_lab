@@ -504,17 +504,23 @@ $welcome_message = ($user_role == 1) ? 'Welcome to your admin dashboard!' : 'Wel
                                 <i class="fas fa-cog me-2"></i>Settings
                             </a>
                         <?php else: ?>
-                            <a href="#" class="btn btn-custom" onclick="alert('Feature coming soon!')">
+                            <a href="view/owner/add_restaurant.php" class="btn btn-custom">
                                 <i class="fas fa-plus me-2"></i>Add Restaurant
                             </a>
-                            <a href="#" class="btn btn-outline-custom" onclick="alert('Feature coming soon!')">
-                                <i class="fas fa-edit me-2"></i>Edit Profile
+                            <a href="view/owner/my_restaurants.php" class="btn btn-custom">
+                                <i class="fas fa-store me-2"></i>My Restaurants
                             </a>
-                            <a href="#" class="btn btn-outline-custom" onclick="alert('Feature coming soon!')">
+                            <a href="view/owner/my_products.php" class="btn btn-custom">
+                                <i class="fas fa-box-open me-2"></i>My Products
+                            </a>
+                            <a href="view/owner/analytics.php" class="btn btn-outline-custom">
                                 <i class="fas fa-chart-bar me-2"></i>Analytics
                             </a>
-                            <a href="#" class="btn btn-outline-custom" onclick="alert('Feature coming soon!')">
+                            <a href="view/owner/reviews.php" class="btn btn-outline-custom">
                                 <i class="fas fa-comments me-2"></i>Reviews
+                            </a>
+                            <a href="view/owner/edit_profile.php" class="btn btn-outline-custom">
+                                <i class="fas fa-edit me-2"></i>Edit Profile
                             </a>
                         <?php endif; ?>
                         
